@@ -1,0 +1,179 @@
+<html>
+<head>
+          
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        
+        <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-resource.min.js"></script>  
+             
+        <script src="script.js"></script>
+        
+        <script src="https://www.gstatic.com/firebasejs/4.1.1/firebase.js"></script>
+        
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD1jYOEB9M0T4fyOob2gdpPLgd8aHv8gUs",
+    authDomain: "bookworm-c69d4.firebaseapp.com",
+    databaseURL: "https://bookworm-c69d4.firebaseio.com",
+    projectId: "bookworm-c69d4",
+    storageBucket: "bookworm-c69d4.appspot.com",
+    messagingSenderId: "464543760329"
+  };
+  firebase.initializeApp(config);
+</script>
+        
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" />
+        <title>BookWorm</title>
+        <link rel="icon" type="image/png" sizes="20x20" href="assets/logo.png">
+        <link rel="stylesheet" href="app.css" type="text/css">
+
+</head>
+
+
+<body ng-app="bookWorm"  ng-controller="bookController">
+        <header>
+            <a href="index.html"> <img src="assets/icon.png" alt="BookWorm"></a>
+        
+<nav  class="{{active}}"  ng-click="$event.preventDefault()">
+
+			<!-- When a link in the menu is clicked, we set the active variable -->
+
+			<a ng-href="#" class="home" ng-click="homef()">Home</a>
+	
+			<a ng-href="#" class="cart" ng-click="cartf()">Cart</a>
+			<a ng-href="#" class="contact" ng-click="contactf()">Contact</a>
+		
+            </nav>
+            <div class="signinModal">
+                <a href="#loginModal">Sign In or Sign Up</a>
+            </div>
+                
+        </header>
+        <!--login modal-->
+<div id="loginModal" class="modalDialog">
+            
+            
+          <div><a href="#close" title="Close" class="close">X</a>
+			
+            <button ng-click="signIn()">Login</button>
+            <button ng-click="register()">Sign Up</button>
+            
+    <div ng-show="login">
+        <h2>Enter an email and password below to sign in to an existing account</h2>
+                <table>
+                    <tr>
+                    <input  style="display:inline; width:auto;" type="email" id="email" name="email" placeholder="Email" ng-model="email"/>
+                    </tr>
+                    &nbsp;&nbsp;&nbsp;
+                    <tr>
+                    <input  style="display:inline;width:auto;" type="password" id="password" name="password" placeholder="Password" ng-model="password"/>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            <button disabled  id="quickstart-sign-in" name="signin" ng-click="toggleSignIn()">Sign In</button>
+                        </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <button  id="quickstart-password-reset" name="verify-email" ng-click="sendPasswordReset()">Send Password Reset Email</button>
+                    </td>
+                    </tr>
+                </table>
+        </div>
+
+    <div ng-show="signUp">
+        
+                <h2>Welcome to BookWorm</h2>
+                <table>
+                    <tr>
+                        <input  style="display:inline;width:auto;" type="text" placeholder="Name" ng-model="displayName"/>
+                    </tr>
+                    <tr>
+                    <input  style="display:inline; width:auto;" type="email" id="email" name="email" placeholder="Email" ng-model="email"/>
+                    </tr>
+                    <tr>
+                    <input  style="display:inline;width:auto;" type="password" id="password" name="password" placeholder="Password" ng-model="password"/>
+                    </tr>
+                    <td>
+                    <button  id="quickstart-sign-up" name="signup" ng-click="handleSignUp()">Sign Up</button>
+                    </td>
+                </table>
+                
+            </div>
+    <div style="background-color:aqua;margin:10px;padding:5px;border:1px solid darkslategrey; border-radius:5px 5px 5px 5px;">
+                        Firebase sign-in status: <span id="quickstart-sign-in-status">Unknown</span>
+                        <div>Firebase auth <code>currentUser</code> object value:</div>
+                        <pre><code id="quickstart-account-details">null</code></pre>
+                    </div>
+
+</div > </div>         
+
+<div class="container" ng-show="homeScreen">  
+
+            <div class="welcome">
+            <h1 style="color: deepskyblue">BookWorm</h1>
+            <h3 style="color: turquoise">One Stop Shop for all book lovers</h3>
+            </div>
+            <div class="landingContent">
+                <p>
+                    BookWorm is a one Stop Shop for all book lovers. You find all popular books of your likings.
+                    You can filter your likings as per genres. Read the descriptions. Buy or borrow. Its an online library.
+                </p>
+            </div>
+        <div  class="contents">
+            <div class="heading"><h2 style="text-align:center">Non-Fiction</h2></div>
+            <ul style="cursor:pointer" ng-repeat="(k,v) in nFiction">
+                <li><a href="#openModal" ng-click="readBookDetails(v);"><img ng-src="assets/nonFiction/{{v.book}}.png" width="200px" height="200px"></a></li>
+            </ul>
+        </div>
+
+        <div  class="contents">
+            <div class="heading"><h2 style="text-align:center">Fiction</h2></div>
+            <ul style="cursor:pointer" ng-repeat="(k,v) in fiction">
+                <li><a href="#openModal" ng-click="readBookDetails(v);"><img ng-src="assets/fiction/{{v.book}}.png" width="200px" height="200px"></a></li>
+            </ul>
+        </div>
+
+        <div class="contents">
+            <div class="heading"><h2 style="text-align:center">Romance</h2></div>
+            <ul style="cursor:pointer">
+           <li ng-repeat="(k,v) in romance"><a href="#openModal" ng-click="readBookDetails(v);"><img ng-src="assets/romance/{{v.book}}.png" width="200px" height="200px"></a></li>
+            </ul>
+        </div>
+
+        <div class="contents">
+            <div class="heading"><h2 style="text-align:center">Miscellaneous</h2></div>
+            <ul style="cursor:pointer">
+           <li ng-repeat="(k,v) in miscellaneous"><a href="#openModal" ng-click="readBookDetails(v);"><img ng-src="assets/miscellaneous/{{v.book}}.png" width="200px" height="200px"></a></li>
+            </ul>
+        </div>
+
+        <div id="openModal" class="modalDialog">
+            
+            <div><a href="#close" title="Close" class="close">X</a>
+                    
+                    <h1>{{readBookData.book}}</h1>
+                    <h3>By</h3>
+                    <h2>{{readBookData.author}}</h2>
+                    <p>Description of the book</p>
+                                        
+            </div>
+
+        </div>
+</div>
+
+<div class="container" ng-show="cartScreen">
+    <h1 style="color:black"> this page is for carts</h1>
+</div>
+<div class="container" ng-show="contactScreen">
+    <div class="welcome">
+        <h1 style="color: deepskyblue">How It Works</h1>
+        <div>
+            <img ng-src="assets/howitworks.png">
+        </div>
+    </div>
+</div>                                  
+</body>
+</html>
